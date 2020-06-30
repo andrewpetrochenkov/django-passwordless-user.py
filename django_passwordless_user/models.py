@@ -30,7 +30,8 @@ class AbstractBaseUser(models.Model):
         return (self.get_username(),)
 
     def get_salted_hmac_key_salt(self):
-        return 'django.contrib.auth.models.AbstractBaseUser.get_session_auth_hash'
+        # django.contrib.auth.models.AbstractBaseUser.get_session_auth_hash"
+        return 'django_passwordless_user.models.AbstractBaseUser.get_session_auth_hash'
 
     def get_salted_hmac_value(self):
         return self.get_username()
@@ -49,6 +50,9 @@ class AbstractBaseUser(models.Model):
         """
         key_salt = self.get_salted_hmac_key_salt()
         value = self.get_salted_hmac_value()
+        print('key_salt = %s' % key_salt)
+        print('value = %s' % value)
+        print("salted_hmac(key_salt, value).hexdigest() = %s" % salted_hmac(key_salt, value).hexdigest())
         try:
             return salted_hmac(key_salt, value, algorithm='sha256').hexdigest()
         except TypeError:
