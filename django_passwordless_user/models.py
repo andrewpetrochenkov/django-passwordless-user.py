@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.crypto import salted_hmac
 
+
 class AbstractBaseUser(models.Model):
     last_login = models.DateTimeField(blank=True, null=True)
 
@@ -24,7 +25,8 @@ class AbstractBaseUser(models.Model):
         return getattr(self, self.USERNAME_FIELD)
 
     def clean(self):
-        setattr(self, self.USERNAME_FIELD, self.normalize_username(self.get_username()))
+        setattr(self, self.USERNAME_FIELD,
+                self.normalize_username(self.get_username()))
 
     def natural_key(self):
         return (self.get_username(),)
@@ -50,9 +52,6 @@ class AbstractBaseUser(models.Model):
         """
         key_salt = self.get_salted_hmac_key_salt()
         value = self.get_salted_hmac_value()
-        print('key_salt = %s' % key_salt)
-        print('value = %s' % value)
-        print("salted_hmac(key_salt, value).hexdigest() = %s" % salted_hmac(key_salt, value).hexdigest())
         try:
             return salted_hmac(key_salt, value, algorithm='sha256').hexdigest()
         except TypeError:
